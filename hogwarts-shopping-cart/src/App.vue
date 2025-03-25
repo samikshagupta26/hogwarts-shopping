@@ -1,93 +1,118 @@
 <template>
   <h1>{{ message }}</h1>
-  <div>
-    <form @submit.prevent="register">
-      <div>
-        <label for="email">Email:</label>
-        <input
-          id="email"
-          v-model="email"
-          type="email"
-          placeholder="Enter your email"
-        />
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input
-          id="password"
-          v-model="password"
-          type="password"
-          placeholder="Create a password"
-        />
-      </div>
-      <button type="submit" :disabled="!isFormValid">Register</button>
-    </form>
-  </div>
-  <hr />
-  <div class="card">
-    <h2>Name: {{ wizard1.name }}</h2>
-    <h2>Wand: {{ wizard1.wand }}</h2>
-    <h2>Age: {{ wizard1.age }}</h2>
-    <button @click="wizard1.name = wizard1.name.toUpperCase()">
-      Change name to upper case
-    </button>
-    <button @click="wizard1.wand.core = 'Unicorn hair'">
-      Change wand core
-    </button>
-    <button @click="wizard1.age = 20">Change age</button>
-  </div>
+  <button @click="sortUsersByAge">Sort users by age</button>
+  <br />
+  <button @click="hideInactive = !hideInactive">{{ toggleButtonName }}</button>
+
+  <h2>Number of active users (computed property): {{ numberOfActiveUsers }}</h2>
+  <h2>Number of active users (computed property): {{ numberOfActiveUsers }}</h2>
+  <h2>Number of active users (computed property): {{ numberOfActiveUsers }}</h2>
+
+  <h2>
+    Number of active users (method call): {{ computeNumberOfActiveUsers() }}
+  </h2>
+  <h2>
+    Number of active users (method call): {{ computeNumberOfActiveUsers() }}
+  </h2>
+  <h2>
+    Number of active users (method call): {{ computeNumberOfActiveUsers() }}
+  </h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Index</th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(user, index) in filteredUsers" :key="user.id">
+        <td>{{ index + 1 }}</td>
+        <td>{{ user.id }}</td>
+        <td :class="{ inactive: !user.active }">
+          {{ user.name }}
+        </td>
+        <td>{{ user.age }}</td>
+        <td>
+          <button @click="user.active = !user.active">
+            {{ user.active ? 'Deactivate' : 'Restore' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
+
 <script setup>
-import { ref, watchEffect } from 'vue'
-let message = ref('Hello, watchEffect!')
-const email = ref('')
-const password = ref('')
-const isFormValid = ref(false)
+import { computed, ref } from 'vue'
 
-// watch([email, password], () => {
-//   const hasEmail = email.value.length > 0
-//   const hasPassword = password.value.length > 0
-//   isFormValid.value = hasEmail && hasPassword
-// })
+let message = ref('Hello, Computed Properties!')
 
-watchEffect(() => {
-  console.log('watchEffect')
-  const hasEmail = email.value.length > 0
-  const hasPassword = password.value.length > 0
-  isFormValid.value = hasEmail && hasPassword
-})
+const users = ref([
+  {
+    "id": 1,
+    "name": "John Doe",
+    "age": 30,
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "age": 25,
+    "active": false
+  },
+  {
+    "id": 3,
+    "name": "Emily Johnson",
+    "age": 28,
+    "active": true
+  },
+  {
+    "id": 4,
+    "name": "Michael Brown",
+    "age": 35,
+    "active": false
+  },
+  {
+    "id": 5,
+    "name": "Linda Davis",
+    "age": 40,
+    "active": true
+  }
+]
+)
 
-const register = () => {
-  alert('Registration successful!')
+let hideInactive = ref(false)
+
+function sortUsersByAge() {
+  users.value.sort((a, b) => a.age - b.age)
 }
 
-let wizard1 = ref({
-  id: 1001,
-  name: 'Harry Potter',
-  house: 'Gryffindor',
-  age: 17,
-  wand: {
-    core: 'Phoenix feather',
-    wood: 'Holly'
-  }
+let toggleButtonName = computed(() =>
+  hideInactive.value ? 'Show all' : 'Hide inactive'
+)
+
+let numberOfActiveUsers = computed(() => {
+  console.log('computed property')
+  return users.value.filter((user) => user.active).length
 })
 
-watchEffect(() => {
-  console.log(wizard1.value.name, wizard1.value.wand.core)
-})
+let computeNumberOfActiveUsers = () => {
+  console.log('method call')
+  return users.value.filter((user) => user.active).length
+}
 
-watchEffect(() => {
-  console.log(wizard1.value)
-})
-
-
+let filteredUsers = computed(() =>
+  hideInactive.value ? users.value.filter((user) => user.active) : users.value
+)
 </script>
+
 <style scoped>
-.card {
-  background-color: purple;
-  color: white;
-  padding: 20px 10px;
-  margin-bottom: 10px;
+.inactive {
+  color: red;
+  text-decoration: line-through;
 }
 </style>
