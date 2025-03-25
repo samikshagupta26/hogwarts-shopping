@@ -1,71 +1,137 @@
 <template>
-  <div>
-    <h1>{{ message }}</h1>
-    <button @click="sortuserByAge">Sort users by Age</button>
-    <button @click="hideInActiveUser">Hide in Active Users</button>
-    <button @click="firstTwoUsers">First Two Users</button>
-    <ul>
-      <li v-for="(user, index) in users" :key="user.id">
-        {{ index }} - {{ user.id }} - {{ user.name }} - {{ user.age }} - {{ user.active }}
-      </li>
-    </ul>
+  <h1>{{ message }}</h1>
+
+  <div class="card">
+    <h1>Scenario 1: Watch a "ref(primitive value)"</h1>
+    <h2>Number: {{ number }}</h2>
+    <button @click="number++">Increment number by 1</button>
+  </div>
+
+  <div class="card">
+    <h1>Scenario 2: Watch a property in "ref(object)"</h1>
+    <h2>Name: {{ wizard1.name }}</h2>
+    <h2>Wand: {{ wizard1.wand }}</h2>
+    <button @click="wizard1.name = wizard1.name.toUpperCase()">
+      Change name to upper case
+    </button>
+    <button @click="changeWizard1Wand">Change wand</button>
+    <button @click="wizard1.wand.core = 'Unicorn hair'">
+      Change wand core
+    </button>
+  </div>
+
+  <div class="card">
+    <h1>Scenario 3: Watch a "ref(object)"</h1>
+    <h2>Name: {{ wizard2.name }}</h2>
+    <h2>Wand: {{ wizard2.wand }}</h2>
+    <button @click="wizard2.name = wizard2.name.toUpperCase()">
+      Change name to upper case
+    </button>
+    <button @click="wizard2.wand.core = 'Phoenix feather'">
+      Change wand core
+    </button>
+    <button @click="changeWizard">Change wizard</button>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-  let message = "Hello, Array change!";
+import { ref, watch } from 'vue'
 
-  function hideInActiveUser(){
-    users.value = users.value.filter((user)=> user.active)
-  }
+let message = ref('Hello, Watchers!')
 
-  function firstTwoUsers(){
-    users.value = users.value.slice(0,2)
-  }
+let number = ref(1)
 
-  const users = ref([
-  {
-    "id": 1,
-    "name": "John Doe",
-    "age": 30,
-    "active": true
-  },
-  {
-    "id": 2,
-    "name": "Jane Smith",
-    "age": 25,
-    "active": false
-  },
-  {
-    "id": 3,
-    "name": "Emily Johnson",
-    "age": 28,
-    "active": true
-  },
-  {
-    "id": 4,
-    "name": "Michael Brown",
-    "age": 35,
-    "active": false
-  },
-  {
-    "id": 5,
-    "name": "Linda Davis",
-    "age": 40,
-    "active": true
+const stopWatch = watch(number, (newValue, oldValue) => {
+  console.log(
+    'Watch a ref(primitive value): number changes',
+    newValue,
+    oldValue
+  )
+  if (newValue >= 5) {
+    stopWatch()
   }
-]
+})
+
+let wizard1 = ref({
+  id: 1001,
+  name: 'Harry Potter',
+  house: 'Gryffindor',
+  age: 17,
+  wand: {
+    core: 'Phoenix feather',
+    wood: 'Holly'
+  }
+})
+
+function changeWizard1Wand() {
+  wizard1.value.wand = {
+    core: 'Dragon heartstring',
+    wood: 'Vine'
+  }
+}
+
+watch(
+  () => wizard1.value.name,
+  (newValue, oldValue) => {
+    console.log(
+      'Watch a property in a ref(object): wizard1 name changes',
+      newValue,
+      oldValue
+    )
+  }
 )
 
-  function sortuserByAge(){
-    users.value.sort((a,b)=> a.age - b.age)
+watch(
+  () => wizard1.value.wand,
+  (newValue, oldValue) => {
+    console.log(
+      'Watch a property in a ref(object): wizard1 wand changes',
+      newValue,
+      oldValue
+    )
+  },
+  { deep: true }
+)
+
+let wizard2 = ref({
+  id: 1003,
+  name: 'Ron Weasley',
+  house: 'Gryffindor',
+  age: 17,
+  wand: {
+    core: 'Unicorn hair',
+    wood: 'Willow'
   }
+})
+
+function changeWizard() {
+  wizard2.value = {
+    id: 1002,
+    name: 'Hermione Granger',
+    house: 'Gryffindor',
+    age: 17,
+    wand: {
+      core: 'Dragon heartstring',
+      wood: 'Vine'
+    }
+  }
+}
+
+watch(
+  wizard2,
+  (newValue, oldValue) => {
+    console.log('Watch a ref(object): wizard2 changes', newValue, oldValue)
+  },
+  { deep: true }
+)
+
 </script>
 
 <style scoped>
-.inactive{
-  color:red; 
-  text-decoration:line-through; 
+.card {
+  background-color: purple;
+  color: white;
+  padding: 20px 10px;
+  margin-bottom: 10px;
 }
 </style>
