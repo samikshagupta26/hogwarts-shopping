@@ -1,137 +1,334 @@
 <template>
-  <h1>{{ message }}</h1>
-
-  <div class="card">
-    <h1>Scenario 1: Watch a "ref(primitive value)"</h1>
-    <h2>Number: {{ number }}</h2>
-    <button @click="number++">Increment number by 1</button>
-  </div>
-
-  <div class="card">
-    <h1>Scenario 2: Watch a property in "ref(object)"</h1>
-    <h2>Name: {{ wizard1.name }}</h2>
-    <h2>Wand: {{ wizard1.wand }}</h2>
-    <button @click="wizard1.name = wizard1.name.toUpperCase()">
-      Change name to upper case
-    </button>
-    <button @click="changeWizard1Wand">Change wand</button>
-    <button @click="wizard1.wand.core = 'Unicorn hair'">
-      Change wand core
-    </button>
-  </div>
-
-  <div class="card">
-    <h1>Scenario 3: Watch a "ref(object)"</h1>
-    <h2>Name: {{ wizard2.name }}</h2>
-    <h2>Wand: {{ wizard2.wand }}</h2>
-    <button @click="wizard2.name = wizard2.name.toUpperCase()">
-      Change name to upper case
-    </button>
-    <button @click="wizard2.wand.core = 'Phoenix feather'">
-      Change wand core
-    </button>
-    <button @click="changeWizard">Change wizard</button>
+  <div class="shopping-cart">
+    <h1>{{ username }}'s Shopping Cart</h1>
+    <div class="cart-container">
+      <div class="cart-list">
+        <div 
+        v-for="item in shoppingCartItems" 
+        class="cart-list-item"
+        :key="item.id"
+        >
+          <img :src="item.image" :alt="item.productName" class="product-image">
+          <div class="item-details-with-actions">
+            <div class="item-details">
+              <h2>{{ item.productName }}</h2>
+              <p class="price">${{ item.price }}</p>
+              <p class="in-stock-status" v-if="item.isInStock">
+                <i class="fa-solid fa-check"></i> In stock
+              </p>
+              <p class="on-backorder-status" v-else>
+                <i class="fa-solid fa-hourglass-half"></i> On backorder
+              </p>
+            </div>
+            <div class="item-actions">
+              <div class="quantity-selector">
+                <button class="quantity-change-button" @click="decreaseOne(item.id)">−</button>
+                <input
+                type="text"
+                class="quantity-input"
+                v-model.number="item.quantity"
+                aria-label="quantity"
+                @blur="changeQuantity(item.id, $event)">
+                <button class="quantity-change-button" @click="increaseOne(item.id)">+</button>
+              </div>
+              <button @click="removeItem(item.id)" class="remove-item">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="order-summary">
+        <h2>Order summary</h2>
+        <button class="toggle-details-button" @click="hideDetails = !hideDetails">
+          {{ hideDetails? 'Show Details': 'Hide Details' }}
+        </button>
+        <div :class="{'hide-order-details': hideDetails}">
+          <div class="summary-item">
+            <span>Subtotal</span>
+            <span>${{ subtotal }}</span>
+          </div>
+          <div class="summary-item">
+            <span>Shipping estimate</span>
+            <span>$100</span>
+          </div>
+          <div class="summary-item">
+            <span>Tax estimate</span>
+            <span>$1112</span>
+          </div>
+        </div>
+        <div class="summary-total">
+          <strong>Order total</strong>
+          <strong>$15112</strong>
+        </div>
+        <button class="checkout-button">Checkout</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
 
-let message = ref('Hello, Watchers!')
+import { computed, ref, watch } from 'vue'
 
-let number = ref(1)
+let username = 'Harry';
 
-const stopWatch = watch(number, (newValue, oldValue) => {
-  console.log(
-    'Watch a ref(primitive value): number changes',
-    newValue,
-    oldValue
-  )
-  if (newValue >= 5) {
-    stopWatch()
-  }
-})
-
-let wizard1 = ref({
-  id: 1001,
-  name: 'Harry Potter',
-  house: 'Gryffindor',
-  age: 17,
-  wand: {
-    core: 'Phoenix feather',
-    wood: 'Holly'
-  }
-})
-
-function changeWizard1Wand() {
-  wizard1.value.wand = {
-    core: 'Dragon heartstring',
-    wood: 'Vine'
-  }
-}
-
-watch(
-  () => wizard1.value.name,
-  (newValue, oldValue) => {
-    console.log(
-      'Watch a property in a ref(object): wizard1 name changes',
-      newValue,
-      oldValue
-    )
-  }
-)
-
-watch(
-  () => wizard1.value.wand,
-  (newValue, oldValue) => {
-    console.log(
-      'Watch a property in a ref(object): wizard1 wand changes',
-      newValue,
-      oldValue
-    )
+let shoppingCartItems = ref([
+  {
+    id: 1,
+    productName: 'Dragon Liver',
+    price: 1500,
+    isInStock: true,
+    quantity: 3,
+    image: 'src/assets/img/DragonLiver.png'
   },
-  { deep: true }
-)
+  {
+    id: 2,
+    productName: 'Golden Snitch',
+    price: 600,
+    isInStock: true,
+    quantity: 2,
+    image: ' src/assets/img/GoldenSnitch.png'
+  },
+  {
+    id: 3,
+    productName: 'Unicorn Tail Hair',
+    price: 1200,
+    isInStock: false,
+    quantity: 1,
+    image: 'src/assets/img/UnicornTailHair.png'
+  },
+  {
+    id: 4,
+    productName: 'Wand',
+    price: 2000,
+    isInStock: true,
+    quantity: 1,
+    image: 'src/assets/img/Wand.jpg'
+  },
+  {
+    id: 5,
+    productName: 'Nimbus 2000',
+    price: 5000,
+    isInStock: true,
+    quantity: 1,
+    image: 'src/assets/img/Nimbus2000.jpg'
+  }]);
 
-let wizard2 = ref({
-  id: 1003,
-  name: 'Ron Weasley',
-  house: 'Gryffindor',
-  age: 17,
-  wand: {
-    core: 'Unicorn hair',
-    wood: 'Willow'
-  }
-})
+let hideDetails = ref(false);
 
-function changeWizard() {
-  wizard2.value = {
-    id: 1002,
-    name: 'Hermione Granger',
-    house: 'Gryffindor',
-    age: 17,
-    wand: {
-      core: 'Dragon heartstring',
-      wood: 'Vine'
+function decreaseOne(id) {
+  shoppingCartItems.value.some((item) => {
+    if (item.id == id && item.quantity != 0) {
+      item.quantity = item.quantity - 1
     }
-  }
+  })
 }
 
+function increaseOne(id) {
+  shoppingCartItems.value.some(item => {
+    if (item.id == id) {
+      item.quantity = item.quantity + 1
+    }
+  })
+}
+
+function removeItem(id) {
+  let index = shoppingCartItems.value.findIndex(item => {
+    return item.id == id;
+  });
+
+  shoppingCartItems.value.splice(index, 1);
+}
+
+let subtotal = computed(()=> shoppingCartItems.value.reduce((acc, item) => acc + item.price * item.quantity, 0))
+
 watch(
-  wizard2,
-  (newValue, oldValue) => {
-    console.log('Watch a ref(object): wizard2 changes', newValue, oldValue)
+  shoppingCartItems,
+() => {
+  localStorage.setItem(
+    'hogwartsShoppingCart', 
+    JSON.stringify(shoppingCartItems.value)
+    )
   },
-  { deep: true }
+{deep: true}
 )
 
 </script>
 
-<style scoped>
-.card {
-  background-color: purple;
-  color: white;
-  padding: 20px 10px;
+<style lang="scss" scoped>
+/* Styles for the shopping cart */
+.shopping-cart {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 0;
+}
+
+/* Styles for the cart title */
+h1 {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Styles for the cart list and order summary */
+.cart-container {
+  display: flex;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.cart-list {
+  flex-grow: 2;
+  margin-right: 20px;
+}
+
+.order-summary {
+  flex-basis: 300px;
+  background-color: #f9fafb;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the cart list item */
+.cart-list-item {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
   margin-bottom: 10px;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.product-image {
+  width: 100px;
+  margin-right: 10px;
+}
+
+.item-details-with-actions {
+  display: flex;
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.item-details {
+  flex-grow: 1;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+
+.price {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.in-stock-status {
+  font-size: 0.9em;
+  color: green;
+}
+
+.on-backorder-status {
+  font-size: 0.9em;
+  color: red;
+}
+
+.quantity-selector {
+  display: flex;
+  border: 1px solid #c1c1c1;
+  border-radius: 8px;
+  overflow: hidden;
+  /* Ensures the children do not break the rounded corners */
+}
+
+.quantity-change-button {
+  background-color: #ffffff;
+  border: none;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.quantity-input {
+  border: none;
+  text-align: center;
+  width: 40px;
+  padding: 10px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.quantity-input:focus {
+  outline: none;
+}
+
+.remove-item {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin-left: 20px;
+}
+
+.quantity-change-button:hover,
+.quantity-change-button:focus,
+.quantity-input:focus,
+.remove-item:hover,
+.remove-item:focus {
+  background-color: #f2f2f2;
+}
+
+/* Styles for the order summary */
+.toggle-details-button {
+  background-color: #f1f1f1;
+  color: #333;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.hide-order-details {
+  display: none;
+  /* Hide details by default */
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  padding: 10px 0;
+  border-top: 1px solid #e2e2e2;
+  margin-top: 10px;
+}
+
+.checkout-button {
+  background-color: #4F46E5;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+  /* smooth transition in and out */
+}
+
+.checkout-button:hover {
+  background-color: #4138D9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
