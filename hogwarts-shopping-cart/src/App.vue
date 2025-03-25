@@ -1,57 +1,30 @@
 <template>
-  <h1>{{ message }}</h1>
-  <button @click="sortUsersByAge">Sort users by age</button>
-  <br />
-  <button @click="hideInactive = !hideInactive">{{ toggleButtonName }}</button>
-
-  <h2>Number of active users (computed property): {{ numberOfActiveUsers }}</h2>
-  <h2>Number of active users (computed property): {{ numberOfActiveUsers }}</h2>
-  <h2>Number of active users (computed property): {{ numberOfActiveUsers }}</h2>
-
-  <h2>
-    Number of active users (method call): {{ computeNumberOfActiveUsers() }}
-  </h2>
-  <h2>
-    Number of active users (method call): {{ computeNumberOfActiveUsers() }}
-  </h2>
-  <h2>
-    Number of active users (method call): {{ computeNumberOfActiveUsers() }}
-  </h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Index</th>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Operation</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(user, index) in filteredUsers" :key="user.id">
-        <td>{{ index + 1 }}</td>
-        <td>{{ user.id }}</td>
-        <td :class="{ inactive: !user.active }">
-          {{ user.name }}
-        </td>
-        <td>{{ user.age }}</td>
-        <td>
-          <button @click="user.active = !user.active">
-            {{ user.active ? 'Deactivate' : 'Restore' }}
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <h1>{{ message }}</h1>
+    <button @click="sortuserByAge">Sort users by Age</button>
+    <button @click="hideInActiveUser">Hide in Active Users</button>
+    <button @click="firstTwoUsers">First Two Users</button>
+    <ul>
+      <li v-for="(user, index) in users" :key="user.id">
+        {{ index }} - {{ user.id }} - {{ user.name }} - {{ user.age }} - {{ user.active }}
+      </li>
+    </ul>
+  </div>
 </template>
 
-
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue';
+  let message = "Hello, Array change!";
 
-let message = ref('Hello, Computed Properties!')
+  function hideInActiveUser(){
+    users.value = users.value.filter((user)=> user.active)
+  }
 
-const users = ref([
+  function firstTwoUsers(){
+    users.value = users.value.slice(0,2)
+  }
+
+  const users = ref([
   {
     "id": 1,
     "name": "John Doe",
@@ -85,34 +58,14 @@ const users = ref([
 ]
 )
 
-let hideInactive = ref(false)
-
-function sortUsersByAge() {
-  users.value.sort((a, b) => a.age - b.age)
-}
-
-let toggleButtonName = computed(() =>
-  hideInactive.value ? 'Show all' : 'Hide inactive'
-)
-
-let numberOfActiveUsers = computed(() => {
-  console.log('computed property')
-  return users.value.filter((user) => user.active).length
-})
-
-let computeNumberOfActiveUsers = () => {
-  console.log('method call')
-  return users.value.filter((user) => user.active).length
-}
-
-let filteredUsers = computed(() =>
-  hideInactive.value ? users.value.filter((user) => user.active) : users.value
-)
+  function sortuserByAge(){
+    users.value.sort((a,b)=> a.age - b.age)
+  }
 </script>
 
 <style scoped>
-.inactive {
-  color: red;
-  text-decoration: line-through;
+.inactive{
+  color:red; 
+  text-decoration:line-through; 
 }
 </style>
