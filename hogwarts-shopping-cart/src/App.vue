@@ -1,70 +1,38 @@
 <template>
-  <h1>{{ message }}</h1>
   <div class="card">
-    <h2 ref="title">This is the app componetnt.</h2>
-    <h2 >Number: {{ number }}</h2>
-    <button @click="number++">Increase the number</button>
-
-    <button @click="isShow = !isShow">Toggle component1</button>
-    <Component1 v-if="isShow"></Component1>
+    <h1 ref="title">Template Refs</h1>
+    <input ref="input" type="text">
+    <button @click="printDomElement">print Dom elements in the console</button>
+    <button @click="changeTitle">Change title</button>
   </div>
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onBeforeUpdate, onMounted, onUnmounted, onUpdated, ref } from 'vue';
-import Component1 from './Component1.vue';
+import { onMounted, ref } from 'vue';
 
-let message = "Hello, again!"
-let number = ref(1)
-let title = ref()
-let isShow = ref(true)
+let title = ref();
+let input = ref();
 
-console.log("App Component is setup");
+  function printDomElement(){
+    console.log(title.value)
+    console.log(input.value)
+  }
 
-onBeforeMount(()=>{
-  console.log("Before App amount")
-  console.log(number.value)
-  console.log(title.value)
-})
+  function changeTitle(){
+    title.value.innerText = "Hello, Friend"
+  }
 
-onMounted(()=>{
-  console.log("It's mounted");
-  console.log(number.value);
-  console.log(title.value)
-})
+  onMounted(()=>{
+    input.value.focus();
+  })
 
-onBeforeUpdate(()=>{
-  console.log("It's mounted");
-  console.log(number.value);
-  console.log(title.value)
-})
-
-
-onUpdated(()=>{
-  console.log("It's updating");
-  console.log(number.value);
-  console.log(title.value)
-})
-
-onBeforeUnmount(()=>{
-  console.log("It's before unmount");
-  console.log(number.value);
-  console.log(title.value)
-})
-
-onUnmounted(()=>{
-  console.log("It's unmounted");
-  console.log(number.value);
-  console.log(title.value)
-})
-
-
+  
 </script>
 
 <style scoped>
   .card{
     background-color: purple;
-    color: white;
+    color:white;
     padding: 20px 10px;
     margin-bottom: 10px;
   }
