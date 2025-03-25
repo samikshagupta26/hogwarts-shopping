@@ -44,7 +44,7 @@
         <div :class="{'hide-order-details': hideDetails}">
           <div class="summary-item">
             <span>Subtotal</span>
-            <span>${{ subtotal }}</span>
+            <span>$13900</span>
           </div>
           <div class="summary-item">
             <span>Shipping estimate</span>
@@ -67,7 +67,7 @@
 
 <script setup>
 
-import { computed, ref, watch } from 'vue'
+import { ref } from 'vue'
 
 let username = 'Harry';
 
@@ -138,19 +138,6 @@ function removeItem(id) {
 
   shoppingCartItems.value.splice(index, 1);
 }
-
-let subtotal = computed(()=> shoppingCartItems.value.reduce((acc, item) => acc + item.price * item.quantity, 0))
-
-watch(
-  shoppingCartItems,
-() => {
-  localStorage.setItem(
-    'hogwartsShoppingCart', 
-    JSON.stringify(shoppingCartItems.value)
-    )
-  },
-{deep: true}
-)
 
 </script>
 
