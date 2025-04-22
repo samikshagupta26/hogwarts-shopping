@@ -1,0 +1,115 @@
+<template>
+    <div class="login-container">
+        <h1>Login</h1>
+
+        <form @submit.prevent="handleLogin">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input v-model="username" type="text" id="username" name="username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input v-model="password" type="password" id="password" name="password"
+                    placeholder="Enter your password">
+            </div>
+            <button class="login-button" type="submit">Login</button>
+        </form>
+    </div>
+</template>
+
+<script setup>
+import { login } from '@/apis/auth';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const username = ref('');
+const password = ref('');
+const router = useRouter();
+const route = useRoute();
+
+
+async function handleLogin() {
+    try {
+        await login(username.value, password.value)
+
+        const redirectpath = route.query.redirect || { name: 'Home' }
+        router.replace(redirectpath)
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+</script>
+
+<style lang="scss" scoped>
+.login-container {
+    padding: 1.5rem;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 2rem auto;
+
+    h2 {
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+
+            label {
+                margin-bottom: 0.5rem;
+                font-size: 1rem;
+                color: #555;
+            }
+
+            input {
+                padding: 0.5rem;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                background-color: #fff;
+                transition: all 0.3s ease;
+
+                &:focus {
+                    border-color: #007bff;
+                    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+                    outline: none;
+                }
+            }
+        }
+
+        .login-button {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #0056b3;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                transform: translateY(-3px);
+            }
+
+            &:active {
+                transform: translateY(3px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+}
+</style>

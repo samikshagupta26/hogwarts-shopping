@@ -31,9 +31,14 @@ async function loadBlogPost(id) {
     }
 }
 
+
 watch(() => route.params.id, (newId, oldId) => {
     loadBlogPost(newId)
 }, { immediate: true })
+
+// onBeforeMount((to, from)=>{
+//     loadBlogPost(to.params.id)
+// })
 </script>
 
 <style lang="scss" scoped>

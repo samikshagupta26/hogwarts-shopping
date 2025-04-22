@@ -6,7 +6,12 @@
 </template>
 
 <script setup>
+import { onBeforeRouteLeave } from 'vue-router';
 
+onBeforeRouteLeave((to, from) => {
+    window.alert('You are about to leave the page. Are you sure?')
+    
+})
 </script>
 
 <style lang="scss" scoped>
