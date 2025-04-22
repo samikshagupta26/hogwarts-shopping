@@ -1,4 +1,5 @@
 import About from '@/Views/About.vue'
+import Ads from '@/Views/Ads.vue'
 import BlogPost from '@/Views/BlogPost.vue'
 import BlogPosts from '@/Views/BlogPosts.vue'
 import BlogPostsGreet from '@/Views/BlogPostsGreet.vue'
@@ -16,7 +17,10 @@ const router = createRouter({
             redirect:{name:'blogPostsGreet'},
             children: [
                 {path:'', name:'blogPostsGreet', component: BlogPostsGreet},
-                {path:':id{\\d+}', name:'blogPost', component: BlogPost}
+                {path:':id{\\d+}', name:'blogPost', components:{
+                    default: BlogPost,
+                    sidebar: Ads
+                } }
             ]
         },
 
