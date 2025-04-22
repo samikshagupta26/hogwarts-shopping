@@ -1,5 +1,5 @@
 {
-  "name": "hogwarts-shopping-cart",
+  "name": "pacjage.json",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,11 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.13"
+    "element-plus": "^2.9.6",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
-    "sass-embedded": "^1.85.0",
+    "sass-embedded": "^1.86.3",
     "vite": "^6.1.0",
     "vite-plugin-vue-devtools": "^7.7.2"
   }
